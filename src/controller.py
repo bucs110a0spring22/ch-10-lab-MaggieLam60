@@ -3,6 +3,7 @@ import pygame
 import random
 from src import hero
 from src import enemy
+from src import bolt
 
 
 class Controller:
@@ -25,6 +26,7 @@ class Controller:
             self.enemies.add(enemy.Enemy("Boogie", x, y, 'assets/enemy.png'))
         self.hero = hero.Hero("Conan", 50, 80, "assets/hero.png")
         self.all_sprites = pygame.sprite.Group((self.hero,) + tuple(self.enemies))
+        self.bolt = None
         self.state = "GAME"
 
     def mainLoop(self):
@@ -48,6 +50,9 @@ class Controller:
                         self.hero.move_left()
                     elif(event.key == pygame.K_RIGHT):
                         self.hero.move_right()
+                    elif(event.key == pygame.K_SPACE):
+                      if self.bolt == None:
+                        self.fire(self.hero)
 
             # check for collisions
             fights = pygame.sprite.spritecollide(self.hero, self.enemies, True)
@@ -60,15 +65,49 @@ class Controller:
                         self.background.fill((250, 0, 0))
                         self.enemies.add(e)
 
-            # redraw the entire screen
+
+                      
+            if self.bolt != None:  
+              shots = pygame.sprite.spritecollide(self.bolt,self.enemies, True)
+              if shots:
+                for e in shots:
+                  e.kill()
+                  self.background.fill((250, 250, 250))
+  
+              # redraw the entire screen
             self.enemies.update()
+            
+            if self.bolt != None:
+              self.bolt.update()
+              if self.bolt.distance > 1000:
+                self.bolt = None
             self.screen.blit(self.background, (0, 0))
             if(self.hero.health == 0):
                 self.state = "GAMEOVER"
+              
             self.all_sprites.draw(self.screen)
+          
+            if self.bolt != None:
+              pygame.sprite.Group((self.bolt,)).draw(self.screen)
 
             # update the screen
             pygame.display.flip()
+'''
+Added- 
+Bolts and bolt collisions
+space button shoots banana
+collision kill enemies 
+
+'''
+
+
+  
+    def fire(self,hero):
+      self.bolt = bolt.Bolt(hero.rect.x + 5,hero.rect.y,"assets/banana.png")
+      ''' 
+      description: fires the banana, 
+      arg(self,hero), 
+      returns: none'''
 
     def gameOver(self):
         self.hero.kill()
