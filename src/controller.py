@@ -7,6 +7,7 @@ from src import bolt
 
 
 class Controller:
+
     def __init__(self, width=640, height=480):
         pygame.init()
         self.width = width
@@ -92,15 +93,9 @@ class Controller:
 
             # update the screen
             pygame.display.flip()
-'''
-Added- 
-Bolts and bolt collisions
-space button shoots banana
-collision kill enemies 
-
-'''
 
 
+# added banana shooting using pygame.press_down, also made bolt collisions
   
     def fire(self,hero):
       self.bolt = bolt.Bolt(hero.rect.x + 5,hero.rect.y,"assets/banana.png")
